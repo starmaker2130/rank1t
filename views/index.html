@@ -221,10 +221,12 @@
     <script>
         var selectedOption = null;
         var selectedOptionHistory = [];
+        var selectedOptionCounterHistory = [];
         
         function selectOption(optionNumber){
             let target = document.getElementById(`rank1t-option-${optionNumber}-container`);
             let targetCounter = document.getElementById(`rank1t-option-${optionNumber}-counter-container`);
+            
             let current = optionNumber;
             
             if(selectedOption!==current){
@@ -233,16 +235,23 @@
 
                 if(selectedOptionHistory.length>0){
                     let oldTarget = document.getElementById(selectedOptionHistory[0]);
+                    let oldTargetCounter = document.getElementById(selectedOptionCounterHistory[0]);
 
                     oldTarget.classList.remove("selected-option-container");
                     oldTarget.style.width = "75px";
+                    oldTargetCounter.style.display = "none"
+                    
                     setTimeout(function(){
                         oldTarget.style.width = "96%";
+                        setTimeout(function(){
+                            oldTargetCounter.style.display = "inline-block"
+                        }, 450);
                     }, 500);
 
                 }
 
                 selectedOptionHistory.unshift(`rank1t-option-${optionNumber}-container`);
+                selectedOptionCounterHistory.unshift(`rank1t-option-${optionNumber}-counter-container`);
 
                 target.classList.add("selected-option-container");
                 target.style.width = "75px";
