@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+    <title></title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        body, html{
+            width: 100%;
+            height: 100%;
+        }
+        
+        #main-app-container{
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        #go-to-mobile-container{
+            background-color: black;
+            z-index: 100;
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: white;
+        }
+            
+        @media only screen and (max-width: 600px) { 
+            /*#main-app-container {
+                background-color: lightblue;
+            }*/
+            
+            #go-to-mobile-container{
+                z-index: -100;
+                display: none;
+            }
+        }
+        
+        #app-header-container{
+            width: 100%;
+            height: 15%;
+            background-color: rgba(0, 0, 0, 0.05);
+            position: absolute;
+            top: 0;
+        }
+        
+        #back-to-messages-main-button-container{
+            background-image: url("../media/img/back.png");
+            background-size: 90% 90%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-top: 8%;
+            margin-left: 3%;
+        }
+        
+        #widget-functionality-container{
+            height: 25px;
+            width: 95%;
+            left: 0;
+            position: absolute;
+            top: 5%;
+        }
+        
+        #network-indicator-container{
+            background-image: url("../media/img/network.png");
+            background-size: 90% 90%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            float: right;
+            margin-right: 5px;
+            width: 25px;
+            height: 100%;
+        }
+        
+        #wifi-indicator-container{
+            background-image: url("../media/img/wifi.png");
+            background-size: 90% 90%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            float: right;
+            margin-right: 5px;
+            width: 25px;
+            height: 100%;
+        }
+        
+        #battery-indicator-container{
+            background-image: url("../media/img/battery.png");
+            background-size: 90% 90%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            float: right;
+            margin-right: 5px;
+            width: 25px;
+            height: 100%;
+        }
+        
+        #access-camera-button-container{
+            background-image: url("../media/img/camera.png");
+            background-size: 90% 90%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            width: 35px;
+            height: 30px;
+            position: absolute;
+            bottom: 25px;
+            left: 20px;
+            display: inline-block;
+        }
+        
+        #access-app-store-button-container{
+            background-image: url("../media/img/app-store.png");
+            background-size: 90% 90%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            width: 35px;
+            height: 30px;
+            position: absolute;
+            bottom: 25px;
+            left: 55px;
+            display: inline-block;
+        }
+        
+        #messages-input-container{
+            width: 100%;
+            height: 20%;
+            position: absolute;
+            bottom: 0;
+            font-family: "Helvetica Neue", sans-serif; 
+        }
+        
+        #input-container{
+            width: 250px;
+            display: inline-block;
+            position: absolute;
+            right: 25px;
+            bottom: 25px;
+            height: 40%;
+            border-radius: 25px;
+            border: 2px lightgray solid;
+            color: lightgray;
+        }
+        
+        #subject-input-container{
+            height: 50%;
+            line-height: 35px;
+            width: 90%;
+            display: block;
+            margin: 0 auto;
+            border-bottom: 1px lightgray solid;
+        }
+        
+        #main-input-container{
+            line-height: 35px;
+            width: 90%;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        #messages-body-container{
+            position: absolute;
+            top: 15%;
+            width: 100%;
+        }
+        
+        #title-container{
+            color: #3333FF;
+            font-weight: 900;
+            font-size: 18px;
+        }
+        
+        #rank1t-app-container{
+            font-family: "Helvetica Neue", sans-serif; 
+            display: block;
+            width: 70%;
+            height: 350px;
+            margin: 3% 0 0 7%;
+        }
+        
+        .rank1t-option-container{
+            width: 96%;
+            padding-left: 10%;
+            display: block;
+            margin: 2% 0 2% 1%;
+            border-radius: 25px;
+            line-height: 50px;
+            height: 50px;
+            font-size: 16px;
+            background-color:  rgba(0, 0, 0, 0.05);
+            transition: background-color 1s, width 0.5s;
+        }
+        
+        .selected-option-container{
+            background-color: #67E1DC;
+        }
+        
+        .rank1t-title-container{
+            display: inline-block;
+        }
+        
+        .rank1t-counter-container{
+            display: inline-block;
+            opacity: 1.0;
+            margin-left: 50%;
+        }
+    </style>
+    <script>
+        var selectedOption = null;
+        var selectedOptionHistory = [];
+        
+        function selectOption(optionNumber){
+            let target = document.getElementById(`rank1t-option-${optionNumber}-container`);
+            let targetCounter = document.getElementById(`rank1t-option-${optionNumber}-counter-container`);
+            let current = optionNumber;
+            
+            if(selectedOption!==current){
+                console.log(selectedOptionHistory);
+                selectedOption = current;
+
+                if(selectedOptionHistory.length>0){
+                    let oldTarget = document.getElementById(selectedOptionHistory[0]);
+
+                    oldTarget.classList.remove("selected-option-container");
+                    oldTarget.style.width = "75px";
+                    setTimeout(function(){
+                        oldTarget.style.width = "96%";
+                    }, 500);
+
+                }
+
+                selectedOptionHistory.unshift(`rank1t-option-${optionNumber}-container`);
+
+                target.classList.add("selected-option-container");
+                target.style.width = "75px";
+                targetCounter.style.display = "none"
+
+                setTimeout(function(){
+                    target.style.width = "96%";
+                    setTimeout(function(){
+                        targetCounter.style.display = "inline-block"
+                    }, 450);
+                }, 500);
+            }
+            else{
+                console.log("already selected this option");
+            }
+        }
+        
+        document.addEventListener("DOMContentLoaded", function(){
+            
+            document.getElementById("rank1t-option-0-container").addEventListener("click", function(){
+                selectOption(0);
+            });
+            
+            document.getElementById("rank1t-option-1-container").addEventListener("click", function(){
+                selectOption(1);
+            });
+            
+            document.getElementById("rank1t-option-2-container").addEventListener("click", function(){
+                selectOption(2);
+            });
+            
+            document.getElementById("rank1t-option-3-container").addEventListener("click", function(){
+                selectOption(3);
+            });
+        });
+    </script>
+</head>
+<body>
+    <div id="go-to-mobile-container">
+        <p>go to the mobile version to see the app</p>
+    </div>
+    <div id="main-app-container">
+        <div id="app-header-container">
+            <div id="widget-functionality-container">
+                <div id="battery-indicator-container"></div>
+                <div id="wifi-indicator-container"></div>
+                <div id="network-indicator-container"></div>
+            </div>
+            <div id="back-to-messages-main-button-container"></div>
+        </div>
+        <div id="messages-body-container">
+            <div id="rank1t-app-container">
+                <div id="title-container">
+                    Topic/Subject to be Ranked
+                </div>
+                <div id="rank1t-option-0-container" class="rank1t-option-container">
+                    <div id="rank1t-option-0-title-container" class="rank1t-title-container">
+                        Option 0
+                    </div>
+                    <div id="rank1t-option-0-counter-container" class="rank1t-counter-container">
+                        0
+                    </div>
+                </div>
+                <div id="rank1t-option-1-container" class="rank1t-option-container">
+                <div id="rank1t-option-1-title-container" class="rank1t-title-container">
+                        Option 1
+                    </div>
+                    <div id="rank1t-option-1-counter-container" class="rank1t-counter-container">
+                        0
+                    </div>
+                </div>
+                <div id="rank1t-option-2-container" class="rank1t-option-container">
+                    <div id="rank1t-option-2-title-container" class="rank1t-title-container">
+                        Option 2
+                    </div>
+                    <div id="rank1t-option-2-counter-container" class="rank1t-counter-container">
+                        0
+                    </div>
+                </div>
+                <div id="rank1t-option-3-container" class="rank1t-option-container">
+                    <div id="rank1t-option-3-title-container" class="rank1t-title-container">
+                        Option 3
+                    </div>
+                    <div id="rank1t-option-3-counter-container" class="rank1t-counter-container">
+                        0
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="messages-input-container">
+            <div id="access-camera-button-container"></div>
+            <div id="access-app-store-button-container"></div>
+            <div id="input-container">
+                <div id="subject-input-container">Objet</div>
+                <div id="main-input-container">iMessage</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
