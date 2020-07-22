@@ -160,6 +160,7 @@
             bottom: 3%;
             font-family: "Helvetica Neue", sans-serif;
             overflow-x: scroll;
+            transition: bottom 0.5s;
         }
         
         #application-icons-banner-container{
@@ -168,7 +169,8 @@
             width: 100%;
             height: 5%;
             position: absolute;
-            bottom: 0;   
+            bottom: 0;
+            transition: bottom 0.5s;
         }
         
         #application-widgets-banner-container{
@@ -251,6 +253,47 @@
             display: inline-block;
             opacity: 1.0;
             margin-left: 50%;
+        }
+        
+        #selected-application-widget-container{
+            height: 0;
+            display: none;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            transition: height 0.5s;
+        }
+        
+        .option-button-container{
+            display: inline-block;
+            width: 49%;
+            font-size: 0;
+            height: 50px;
+            line-height: 50px;
+            text-align: center;
+            text-transform: uppercase;
+            font-weight: 900;
+            font-family: monospace;
+        }
+        
+        #create-option-button-container{
+            font-size: 16px;
+        }
+        
+        #category-option-button-container{
+            font-size: 16px;
+        }
+        
+        #search-for-category-container{
+            width: 90%;
+            height: 30px;
+            line-height: 30px;
+            border-radius: 25px;
+            display: block;
+            margin: 5% auto 0 auto;
+            outline: none;
+            text-align: center;
+            font-size: 24px;
         }
     </style>
     <script src="../js/jquery-3.2.1.min.js"></script>
@@ -367,6 +410,16 @@
                 toggleApplicationWidgetBanner();
             });
             
+            document.getElementById("rank1t-app-widget-button-container").addEventListener("click", function(){
+                document.getElementById("selected-application-widget-container").style.display = "block";
+                
+                setTimeout(function(){
+                    document.getElementById("selected-application-widget-container").style.height = "30%";
+                    document.getElementById("messages-input-container").style.bottom = "33%";
+                    document.getElementById("application-icons-banner-container").style.bottom = "30%";
+                }, 50);
+                
+            });
         });
     </script>
 </head>
@@ -444,8 +497,11 @@
             </div>
         </div>
         <div id="selected-application-widget-container">
-            <div id="search-for-category-container"></div>
-            <div id="main-rank1t-options-container"></div>
+            <input id="search-for-category-container" type="text" />
+            <div id="main-rank1t-options-container">
+                <div id="create-option-button-container" class="option-button-container">create</div>
+                <div id="category-option-button-container" class="option-button-container">category</div>
+            </div>
         </div>
     </div>
 </body>
