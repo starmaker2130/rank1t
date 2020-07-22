@@ -122,6 +122,24 @@
             display: inline-block;
         }
         
+        .app-widget-button-container{
+            background-image: url("../media/img/app-store.png");
+            background-size: 90% 90%;
+            background-position: center center;
+            background-repeat: no-repeat;
+            width: 35px;
+            height: 30px;
+            margin-top: 5px;
+            display: inline-block;
+        }
+        
+        #rank1t-app-widget-button-container{
+            background-image: url("../media/img/rank1t-icon-container.png") !important;
+            background-size: 100% 100%;
+            margin-left: 10px;
+            border-radius: 50%;
+        }
+        
         #access-app-store-button-container{
             background-image: url("../media/img/app-store.png");
             background-size: 90% 90%;
@@ -139,8 +157,25 @@
             width: 100%;
             height: 20%;
             position: absolute;
-            bottom: 0;
-            font-family: "Helvetica Neue", sans-serif; 
+            bottom: 3%;
+            font-family: "Helvetica Neue", sans-serif;
+            overflow-x: scroll;
+        }
+        
+        #application-icons-banner-container{
+            background-color: lightgray;
+            color: white;
+            width: 100%;
+            height: 5%;
+            position: absolute;
+            bottom: 0;   
+        }
+        
+        #application-widgets-banner-container{
+            width: 100%;
+            height: 100%;
+            display: block;
+            transition: height 0.5s, opacity 0.5s;
         }
         
         #input-container{
@@ -218,10 +253,13 @@
             margin-left: 50%;
         }
     </style>
+    <script src="../js/jquery-3.2.1.min.js"></script>
     <script>
         var selectedOption = null;
         var selectedOptionHistory = [];
         var selectedOptionCounterHistory = [];
+        var votes = [0, 0, 0, 0];
+        var AWBInView = true; //AWB = Application Widget Banner
         
         function selectOption(optionNumber){
             let target = document.getElementById(`rank1t-option-${optionNumber}-container`);
@@ -239,7 +277,14 @@
 
                     oldTarget.classList.remove("selected-option-container");
                     oldTarget.style.width = "75px";
-                    oldTargetCounter.style.display = "none"
+                    
+                    
+                    let voteFix = selectedOptionHistory[0].substring(selectedOptionHistory[0].indexOf("n-")+2,selectedOptionHistory[0].indexOf("n-")+3);
+                    
+                    votes[voteFix]--;
+                    
+                    oldTargetCounter.innerHTML = votes[voteFix];
+                    oldTargetCounter.style.display = "none";
                     
                     setTimeout(function(){
                         oldTarget.style.width = "96%";
@@ -255,8 +300,12 @@
 
                 target.classList.add("selected-option-container");
                 target.style.width = "75px";
+                
+                votes[optionNumber]++;
+                
+                targetCounter.innerHTML = votes[optionNumber];
                 targetCounter.style.display = "none"
-
+                
                 setTimeout(function(){
                     target.style.width = "96%";
                     setTimeout(function(){
@@ -266,6 +315,33 @@
             }
             else{
                 console.log("already selected this option");
+            }
+        }
+        
+        function toggleApplicationWidgetBanner(){
+            let banner = document.getElementById("application-widgets-banner-container");
+            
+            if(AWBInView){
+                
+                banner.style.height = 0;
+                banner.style.opacity = 0;
+                AWBInView = false;
+                
+                setTimeout(function(){
+                    banner.style.display = "none";
+                    console.log(AWBInView);
+                }, 550);
+                
+            }
+            else{
+                banner.style.display = "block";
+                setTimeout(function(){
+                    banner.style.height = 1.0;
+                    banner.style.opacity = 1.0;
+
+                    AWBInView = true;
+                    console.log(AWBInView);
+                }, 50);
             }
         }
         
@@ -286,6 +362,11 @@
             document.getElementById("rank1t-option-3-container").addEventListener("click", function(){
                 selectOption(3);
             });
+            
+            document.getElementById("access-app-store-button-container").addEventListener("click", function(){
+                toggleApplicationWidgetBanner();
+            });
+            
         });
     </script>
 </head>
@@ -348,6 +429,23 @@
                 <div id="subject-input-container">Objet</div>
                 <div id="main-input-container">iMessage</div>
             </div>
+        </div>
+        <div id="application-icons-banner-container">
+            <div id="application-widgets-banner-container">
+                <div id="rank1t-app-widget-button-container" class="app-widget-button-container"></div>
+                <div class="app-widget-button-container"></div>
+                <div class="app-widget-button-container"></div>
+                <div class="app-widget-button-container"></div>
+                <div class="app-widget-button-container"></div>
+                <div class="app-widget-button-container"></div>
+                <div class="app-widget-button-container"></div>
+                <div class="app-widget-button-container"></div>
+                <div class="app-widget-button-container"></div>
+            </div>
+        </div>
+        <div id="selected-application-widget-container">
+            <div id="search-for-category-container"></div>
+            <div id="main-rank1t-options-container"></div>
         </div>
     </div>
 </body>
