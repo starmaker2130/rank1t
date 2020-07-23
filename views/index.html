@@ -133,8 +133,8 @@
             display: inline-block;
         }
         
-        #rank1t-app-widget-button-container{
-            background-image: url("../media/img/rank1t-icon-container.png") !important;
+        #rushmore-app-widget-button-container{
+            background-image: url("../media/img/rushmore-icon-container.png") !important;
             background-size: 100% 100%;
             margin-left: 10px;
             border-radius: 50%;
@@ -220,7 +220,7 @@
             font-size: 18px;
         }
         
-        #rank1t-app-container{
+        #rushmore-app-container{
             font-family: "Helvetica Neue", sans-serif; 
             display: block;
             width: 70%;
@@ -228,7 +228,7 @@
             margin: 3% 0 0 7%;
         }
         
-        .rank1t-option-container{
+        .rushmore-option-container{
             width: 96%;
             padding-left: 10%;
             display: block;
@@ -245,11 +245,11 @@
             background-color: #67E1DC;
         }
         
-        .rank1t-title-container{
+        .rushmore-title-container{
             display: inline-block;
         }
         
-        .rank1t-counter-container{
+        .rushmore-counter-container{
             display: inline-block;
             opacity: 1.0;
             margin-left: 50%;
@@ -266,34 +266,44 @@
         
         .option-button-container{
             display: inline-block;
-            width: 49%;
+            width: 100px;
             font-size: 0;
-            height: 50px;
+            height: 100px;
             line-height: 50px;
             text-align: center;
             text-transform: uppercase;
             font-weight: 900;
             font-family: monospace;
+            background-repeat: no-repeat;
+            background-position: center center;
+            position: fixed;
+            border-radius: 50%;
         }
         
         #create-option-button-container{
-            font-size: 16px;
+            background-image: url("../media/img/create-icon.png");
+            left: 15%;
+            background-color: rgba(255, 0, 0, 0.7);
+            background-size: 118% 118%;
         }
         
         #category-option-button-container{
-            font-size: 16px;
+            background-image: url("../media/img/category-icon.png");
+            right: 15%;
+            background-color: rgba(50, 205, 50, 0.7);
+            background-size: 125% 125%;
         }
         
         #search-for-category-container{
-            width: 90%;
-            height: 30px;
-            line-height: 30px;
-            border-radius: 25px;
+            width: 80%;
+            height: 50px;
+            line-height: 50px;
+            border-radius: 10px;
             display: block;
-            margin: 5% auto 0 auto;
+            margin: 5% auto;
             outline: none;
             text-align: center;
-            font-size: 24px;
+            font-size: 18px;
         }
         
     </style>
@@ -306,8 +316,8 @@
         var AWBInView = true; //AWB = Application Widget Banner
         
         function selectOption(optionNumber){
-            let target = document.getElementById(`rank1t-option-${optionNumber}-container`);
-            let targetCounter = document.getElementById(`rank1t-option-${optionNumber}-counter-container`);
+            let target = document.getElementById(`rushmore-option-${optionNumber}-container`);
+            let targetCounter = document.getElementById(`rushmore-option-${optionNumber}-counter-container`);
             
             let current = optionNumber;
             
@@ -339,8 +349,8 @@
 
                 }
 
-                selectedOptionHistory.unshift(`rank1t-option-${optionNumber}-container`);
-                selectedOptionCounterHistory.unshift(`rank1t-option-${optionNumber}-counter-container`);
+                selectedOptionHistory.unshift(`rushmore-option-${optionNumber}-container`);
+                selectedOptionCounterHistory.unshift(`rushmore-option-${optionNumber}-counter-container`);
 
                 target.classList.add("selected-option-container");
                 target.style.width = "75px";
@@ -389,21 +399,67 @@
             }
         }
         
-        document.addEventListener("DOMContentLoaded", function(){
+        var RushmoreAppIsVisible = true;
+        
+        function hideRushmoreAppContainer(){
+            let rushmoreApp = document.getElementById("rushmore-app-container");
+            rushmoreApp.style.height = 0;
+            rushmoreApp.style.opacity = 0;
+
+            setTimeout(function(){
+                rushmoreApp.style.display = "none";
+                RushmoreAppIsVisible = false;
+            }, 550);
+        }
+        
+        function showRushmoreAppContainer(){
+            let rushmoreApp = document.getElementById("rushmore-app-container");
+            rushmoreApp.style.display = "block";
+
+            setTimeout(function(){
+                rushmoreApp.style.height = 1.0;
+                rushmoreApp.style.opacity = 1.0;
+                RushmoreAppIsVisible = true;
+            }, 50);
+        }
+        
+        function toggleRushmoreAppVisibility(value){
             
-            document.getElementById("rank1t-option-0-container").addEventListener("click", function(){
+            
+            if(value!==null){
+                if(value===0){
+                    hideRushmoreAppContainer();
+                }
+                else if(value===1){
+                    showRushmoreAppContainer();
+                }
+            }
+            else{
+                if(RushmoreAppIsVisible){
+                    hideRushmoreAppContainer();
+                }
+                else{
+                    showRushmoreAppContainer();
+                }
+            }
+        }
+        
+        document.addEventListener("DOMContentLoaded", function(){
+            toggleRushmoreAppVisibility(0);
+            
+            document.getElementById("rushmore-option-0-container").addEventListener("click", function(){
                 selectOption(0);
             });
             
-            document.getElementById("rank1t-option-1-container").addEventListener("click", function(){
+            document.getElementById("rushmore-option-1-container").addEventListener("click", function(){
                 selectOption(1);
             });
             
-            document.getElementById("rank1t-option-2-container").addEventListener("click", function(){
+            document.getElementById("rushmore-option-2-container").addEventListener("click", function(){
                 selectOption(2);
             });
             
-            document.getElementById("rank1t-option-3-container").addEventListener("click", function(){
+            document.getElementById("rushmore-option-3-container").addEventListener("click", function(){
                 selectOption(3);
             });
             
@@ -411,7 +467,7 @@
                 toggleApplicationWidgetBanner();
             });
             
-            document.getElementById("rank1t-app-widget-button-container").addEventListener("click", function(){
+            document.getElementById("rushmore-app-widget-button-container").addEventListener("click", function(){
                 document.getElementById("selected-application-widget-container").style.display = "block";
                 
                 setTimeout(function(){
@@ -438,39 +494,39 @@
             <div id="back-to-messages-main-button-container"></div>
         </div>
         <div id="messages-body-container">
-            <div id="rank1t-app-container">
+            <div id="rushmore-app-container">
                 <div id="title-container">
                     Topic/Subject to be Ranked
                 </div>
-                <div id="rank1t-option-0-container" class="rank1t-option-container">
-                    <div id="rank1t-option-0-title-container" class="rank1t-title-container">
+                <div id="rushmore-option-0-container" class="rushmore-option-container">
+                    <div id="rushmore-option-0-title-container" class="rushmore-title-container">
                         Option 0
                     </div>
-                    <div id="rank1t-option-0-counter-container" class="rank1t-counter-container">
+                    <div id="rushmore-option-0-counter-container" class="rushmore-counter-container">
                         0
                     </div>
                 </div>
-                <div id="rank1t-option-1-container" class="rank1t-option-container">
-                <div id="rank1t-option-1-title-container" class="rank1t-title-container">
+                <div id="rushmore-option-1-container" class="rushmore-option-container">
+                    <div id="rushmore-option-1-title-container" class="rushmore-title-container">
                         Option 1
                     </div>
-                    <div id="rank1t-option-1-counter-container" class="rank1t-counter-container">
+                    <div id="rushmore-option-1-counter-container" class="rushmore-counter-container">
                         0
                     </div>
                 </div>
-                <div id="rank1t-option-2-container" class="rank1t-option-container">
-                    <div id="rank1t-option-2-title-container" class="rank1t-title-container">
+                <div id="rushmore-option-2-container" class="rushmore-option-container">
+                    <div id="rushmore-option-2-title-container" class="rushmore-title-container">
                         Option 2
                     </div>
-                    <div id="rank1t-option-2-counter-container" class="rank1t-counter-container">
+                    <div id="rushmore-option-2-counter-container" class="rushmore-counter-container">
                         0
                     </div>
                 </div>
-                <div id="rank1t-option-3-container" class="rank1t-option-container">
-                    <div id="rank1t-option-3-title-container" class="rank1t-title-container">
+                <div id="rushmore-option-3-container" class="rushmore-option-container">
+                    <div id="rushmore-option-3-title-container" class="rushmore-title-container">
                         Option 3
                     </div>
-                    <div id="rank1t-option-3-counter-container" class="rank1t-counter-container">
+                    <div id="rushmore-option-3-counter-container" class="rushmore-counter-container">
                         0
                     </div>
                 </div>
@@ -486,7 +542,7 @@
         </div>
         <div id="application-icons-banner-container">
             <div id="application-widgets-banner-container">
-                <div id="rank1t-app-widget-button-container" class="app-widget-button-container"></div>
+                <div id="rushmore-app-widget-button-container" class="app-widget-button-container"></div>
                 <div class="app-widget-button-container"></div>
                 <div class="app-widget-button-container"></div>
                 <div class="app-widget-button-container"></div>
@@ -498,8 +554,8 @@
             </div>
         </div>
         <div id="selected-application-widget-container">
-            <input id="search-for-category-container" type="text" />
-            <div id="main-rank1t-options-container">
+            <input id="search-for-category-container" type="text" placeholder="Search Rushmore Rankings..."/>
+            <div id="main-rushmore-options-container">
                 <div id="create-option-button-container" class="option-button-container">create</div>
                 <div id="category-option-button-container" class="option-button-container">category</div>
             </div>
