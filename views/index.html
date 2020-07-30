@@ -4,9 +4,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-    <title></title>
+    <title>Rushmore v. 0.2.0.12</title>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
     <style>
-        * {
+/*	@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,700;1,400;1,700&display=swap');*/
+        
+	* {
             margin: 0;
             padding: 0;
         }
@@ -374,6 +377,59 @@
             font-size: 20px;
         }
         
+	#rushmore-categories-container{
+	    position: absolute;
+	    bottom: 0;
+	    width: 100%;
+	    z-index: 100;
+	    background-color: rgba(255, 0, 255, 0.7);
+	    cursor: pointer;
+  	    height: 0;
+	    transition: opacity 0.5s, height 1s;
+	}
+
+	.rushmore-category-preview-container{
+	    width: 105px;
+	    height: 105px;
+	    border-radius: 10px;
+	    margin: 2% 1%;
+	    text-align: center;
+	    color: white;
+	    line-height: 100px;
+/*	    vertical-align: middle;*/
+	    font-size: 18px;
+	    font-weight: 700;
+	    display: inline-block;
+	    box-shadow: 3px 3px 3px white;
+	    text-transform: uppercase;
+	    font-family: "IBM Plex Sans", sans-serif;
+	    transition: height 0.5s, width 0.5s, opacity 0.5s;
+	}
+
+	.category-preview-container-in-focus{
+	    width: 300px;
+	    height: 300px;
+	}
+
+	.city-category-item-container{
+	    width: 75px;
+	    height: 75px;
+	    border-radius: 10px;
+	    margin: 2% 1%;
+	    text-align: center;
+	    color: white;
+	    line-height: 75px;
+/*	    vertical-align: middle;*/
+	    font-size: 16px;
+	    font-weight: 700;
+	    display: inline-block;
+	    box-shadow: 3px 3px 3px white;
+	    text-transform: uppercase;
+	    font-family: "IBM Plex Sans", sans-serif;
+	    transition: height 0.5s, width 0.5s, opacity 0.5s;
+	    display: none;
+	    opacity: 0;
+	}
     </style>
     <script src="../js/jquery-3.2.1.min.js"></script>
     <script>
@@ -436,10 +492,11 @@
 
 		waitingInterval = setInterval(function(){
 
-		    if(waitingForOthersTimer<20){
-			if(waitingForOthersTimer==20)document.getElementById("search-for-category-container").value = "Waiting for others...";
+		    
+	            if(waitingForOthersTimer==20)document.getElementById("search-for-category-container").value = "Waiting for others...";
+		    if(waitingForOthersTimer<16){			
 			let finalWaitingString;
-			if(waitingForOthersTimer>=10&&waitingForOthersTimer<16)finalWaitingString=waitingForOthersTimer;
+			if(waitingForOthersTimer>=10)finalWaitingString=waitingForOthersTimer;
 			if(waitingForOthersTimer<10)finalWaitingString="0"+waitingForOthersTimer;
 	 	        
 			document.getElementById("search-for-category-container").value = "00:"+finalWaitingString;
@@ -778,6 +835,25 @@
 	    document.getElementById("category-option-button-container").addEventListener("click", function(){
                 openCategories();
             });
+
+	    document.getElementById("city-category-preview-container").addEventListener("click", function(){
+		this.classList.add("category-preview-container-in-focus");
+		console.log("clicked on the 'cities' category\nshow the sub sections");
+		setTimeout(function(){
+		    let cityCategoryItems = document.getElementsByClassName("city-category-item-container");
+		
+		    for(var citiesInDB = 0 ; citiesInDB < cityCategoryItems.length; citiesInDB++){
+		        (function(){
+			    let current = cityCategoryItems[citiesInDB];
+			    current.style.display = "inline-block";
+			    setTimeout(function(){
+				current.style.opacity = 1.0;
+			    }, 50);
+		        })();
+		    }
+
+		}, 550);
+	    });
         });
         
         var creatingAPoll = false;
@@ -896,13 +972,17 @@
 	    document.getElementById("category-option-button-container").style.opacity = 0;
 	    document.getElementById("messages-input-container").style.opacity = 0;
  	    document.getElementById("application-icons-banner-container").style.opacity = 0;
+
+	    document.getElementById("search-for-category-container").style.opacity = 0;
 	    setTimeout(function(){
 		document.getElementById("create-option-button-container").style.display = "none";
 		document.getElementById("category-option-button-container").style.display = "none";
 	    	document.getElementById("messages-input-container").style.display = "none";
-		document.getElementById("application-icons-banner-container").style.display = "none";	
+		document.getElementById("application-icons-banner-container").style.display = "none";
+  	        document.getElementById("search-for-category-container").style.display = "none";
 	    }, 550);
-
+	
+	    document.getElementById("rushmore-categories-container").style.height = "100%";
         }
     </script>
 </head>
@@ -980,6 +1060,68 @@
                 <div id="save-option-button-container" class="option-button-container">save</div>
             </div>
         </div>
+	<div id="rushmore-categories-container">
+	    <div id="ranked-category-preview-container" class="rushmore-category-preview-container">
+		ranked
+	    </div>
+	    <div id="city-category-preview-container" class="rushmore-category-preview-container">
+		cities
+		<div id="bmore-city-category-item-container" class="city-category-item-container">
+		    baltimore
+		</div>
+		<div id="atlanta-city-category-item-container" class="city-category-item-container">
+		    atlanta
+		</div>
+		<div id="dc-city-category-item-container" class="city-category-item-container">
+		    dc
+		</div>
+		<div id="new-york-city-category-item-container" class="city-category-item-container">
+		    new york
+		</div>
+		<div id="los-angeles-city-category-item-container" class="city-category-item-container">
+		    los angeles
+		</div>
+		<div id="nashville-city-category-item-container" class="city-category-item-container">
+		    nashville
+		</div>
+	    </div>
+	    <div id="tvmedia-category-preview-container" class="rushmore-category-preview-container">
+		tv/media
+	    </div>
+	    <div id="football-category-preview-container" class="rushmore-category-preview-container">
+		football
+	    </div>
+	    <div id="food-category-preview-container" class="rushmore-category-preview-container">
+		food
+	    </div>
+	    <div id="history-category-preview-container" class="rushmore-category-preview-container">
+		history
+	    </div>
+	    <div id="tech-category-preview-container" class="rushmore-category-preview-container">
+		tech
+	    </div>
+	    <div id="travel-category-preview-container" class="rushmore-category-preview-container">
+		travel
+	    </div>
+	    <div id="dating-category-preview-container" class="rushmore-category-preview-container">
+		dating
+	    </div>
+	    <div id="politics-category-preview-container" class="rushmore-category-preview-container">
+		politics
+	    </div>
+	    <div id="fashion-category-preview-container" class="rushmore-category-preview-container">
+		fashion
+	    </div>
+	    <div id="racing-category-preview-container" class="rushmore-category-preview-container">
+		racing
+	    </div>
+	    <div id="world-leaders-category-preview-container" class="rushmore-category-preview-container">
+		leaders
+	    </div>
+	    <div id="music-category-preview-container" class="rushmore-category-preview-container">
+		music
+	    </div>
+	</div>
     </div>
 </body>
 </html>
