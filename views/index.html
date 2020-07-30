@@ -247,7 +247,7 @@
 
 	.selected-option-container-1{
             background-color: blue;
-	    color: white;
+	    color: white !important;
         }
 
 	.selected-option-container-2{
@@ -418,7 +418,7 @@
 	var waitingInterval;
         
         function checkSMChecks(){
-            console.log("checking checks!!");
+            //console.log("checking checks!!");
             let checkCounter = 0;
             for(let totalChecks = 0; totalChecks < sessionManager.application.checks.length; totalChecks++){
                 (function(){
@@ -458,7 +458,7 @@
             else{
                 document.getElementById("search-for-category-container").classList.add("white-category-colors");
             }
-            console.log(checkCounter);
+            //console.log(checkCounter);
         }
 
 	function showFinalRankings(){
@@ -476,13 +476,23 @@
 
 	function loadTotalRankings(){
 	    let totalRankingsTally = [
-		{item: 2, name: "", tally:4, weight: 16},
-		{item: 3, name: "", tally:2, weight: 8},
-		{item: 1, name: "", tally:1, weight: 4},
-		{item: 0, name: "", tally:0, weight: 2}
+		{item: 3, name: "", tally:4, weight: 2},
+		{item: 2, name: "", tally:2, weight: 4},
+		{item: 0, name: "", tally:1, weight: 16},
+		{item: 1, name: "", tally:0, weight: 8}
 	    ];
+
 	    console.log(totalRankingsTally);
-	
+	    for(var markerIn = 0; markerIn<totalRankingsTally.length; markerIn++){
+		(function(){
+    	            document.getElementById(`rushmore-option-${markerIn}-container`).classList.remove(`selected-option-container-${totalRankingsTally[markerIn].item}`);
+    	            document.getElementById(`rushmore-option-${markerIn}-container`).classList.add(`selected-option-container-${markerIn}`);
+		})();
+	    }
+
+	    document.getElementById("search-for-category-container").classList.remove("white-category-colors");
+	    document.getElementById("search-for-category-container").value = "SHARE RANK1NG";
+
 	}
 
         var optionContainerCounter = 0;
@@ -737,7 +747,7 @@
 		            console.log("ohh yea");
 		            break;
 		        case 1:
-		            console.log("yoooo")
+		            //console.log("yoooo")
 		            document.getElementById("title-container").innerHTML = document.getElementById("search-for-category-container").value;
 		            sessionManager.application.checks[0] = true;
 		            checkSMChecks();
