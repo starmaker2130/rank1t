@@ -230,14 +230,13 @@
         }
         
         .rushmore-option-container{
-            width: 96%;
+            width: 100%;
             padding-left: 10%;
             display: block;
             margin: 2% 0 2% 1%;
             border-radius: 25px;
             line-height: 50px;
             height: 50px;
-            font-size: 16px;
             background-color:  rgba(0, 0, 0, 0.05);
             transition: background-color 1s, width 0.5s;
         }
@@ -246,14 +245,33 @@
             background-color: #67E1DC;
         }
         
+        .rushmore-title-container:focus{
+            outline: none;
+        }
+        
+        .rushmore-title-container,
+        .rushmore-title-container::placeholder{
+            color: black;
+            font-weight: 900;
+            font-size: 18px;
+        }
+        
         .rushmore-title-container{
             display: inline-block;
+            background-color: rgba(0, 0, 0, 0.05);
+            height: 100%; 
+            width: 100%;
+            margin: 0 auto;
+            border: 0;
+            border-radius: 25px;
+            text-align: center;
         }
         
         .rushmore-counter-container{
             display: inline-block;
             opacity: 1.0;
             margin-left: 50%;
+            display: none;
         }
         
         .selected-application-widget-container{
@@ -335,9 +353,36 @@
             font-size: 20px;
         }
         
+        .submit-poll-category-colors{
+            color: black;
+            background-color: aquamarine !important;
+            font-weight: 900;
+            font-size: 20px;
+        }
+        
     </style>
     <script src="../js/jquery-3.2.1.min.js"></script>
     <script>
+        var sessionManager = {
+            application: {
+                page: 0, /* 0 = lobby/main menu
+                *   1 = create menu
+                *     at this stage the topic/subject to be   *     Ranked" atomaticlly updates as the user *     types it into the title field below and
+                *     tapping on options allows the user to 
+                *     modify their names; voting is disabled 
+                *
+                *
+                */
+                checks: [
+                    false,  // title
+                    false,  // option 0
+                    false,  // option 1
+                    false,  // option 2
+                    false,  // option 3
+                ]
+            }
+        };
+        
         var selectedOption = null;
         var selectedOptionHistory = [];
         var selectedOptionCounterHistory = [];
@@ -346,6 +391,35 @@
         var RushmoreAppIsVisible = true;
         var RushmoreAppWidgetIsVisible = false;
         
+        function selectCurrentOptionForNaming(optionNum){
+            let target = document.getElementById(`rushmore-option-${optionNum}-container`);
+            let targetCounter = document.getElementById(`rushmore-option-${optionNum}-counter-container`);
+            
+            sessionManager.application.checks[optionNum+1] = true;
+            checkSMChecks();
+        }
+        
+        function checkSMChecks(){
+            console.log("checking checks!!");
+            let checkCounter = 0;
+            for(let totalChecks = 0; totalChecks < sessionManager.application.checks.length; totalChecks++){
+                (function(){
+                    if(sessionManager.application.checks[totalChecks]){
+                        checkCounter++;
+                    }
+                })();
+            }
+            
+            if(checkCounter===5){
+                document.getElementById("search-for-category-container").classList.remove("white-category-colors");
+                document.getElementById("search-for-category-container").classList.add("submit-poll-category-colors");
+            }
+            else{
+                document.getElementById("search-for-category-container").classList.add("white-category-colors");
+            }
+            console.log(checkCounter);
+        }
+        
         function selectOption(optionNumber){
             let target = document.getElementById(`rushmore-option-${optionNumber}-container`);
             let targetCounter = document.getElementById(`rushmore-option-${optionNumber}-counter-container`);
@@ -353,50 +427,62 @@
             let current = optionNumber;
             
             if(selectedOption!==current){
-                console.log(selectedOptionHistory);
-                selectedOption = current;
+                switch(sessionManager.application.page){
+                    case 0:
+                        console.log("page 0 voting disabled");
+                        break;
+                    case 1:
+                        console.log("page 1 voting disabled");
+                        selectCurrentOptionForNaming(optionNumber);
+                        break;
+                    case 2:
+                        console.log("page 2 voting enabled");
+                        console.log(selectedOptionHistory);
+                        selectedOption = current;
 
-                if(selectedOptionHistory.length>0){
-                    let oldTarget = document.getElementById(selectedOptionHistory[0]);
-                    let oldTargetCounter = document.getElementById(selectedOptionCounterHistory[0]);
+                        if(selectedOptionHistory.length>0){
+                            let oldTarget = document.getElementById(selectedOptionHistory[0]);
+                            let oldTargetCounter = document.getElementById(selectedOptionCounterHistory[0]);
 
-                    oldTarget.classList.remove("selected-option-container");
-                    oldTarget.style.width = "75px";
-                    
-                    
-                    let voteFix = selectedOptionHistory[0].substring(selectedOptionHistory[0].indexOf("n-")+2,selectedOptionHistory[0].indexOf("n-")+3);
-                    
-                    votes[voteFix]--;
-                    
-                    oldTargetCounter.innerHTML = votes[voteFix];
-                    oldTargetCounter.style.display = "none";
-                    
-                    setTimeout(function(){
-                        oldTarget.style.width = "96%";
+                            oldTarget.classList.remove("selected-option-container");
+                            oldTarget.style.width = "75px";
+
+
+                            let voteFix = selectedOptionHistory[0].substring(selectedOptionHistory[0].indexOf("n-")+2,selectedOptionHistory[0].indexOf("n-")+3);
+
+                            votes[voteFix]--;
+
+                            oldTargetCounter.innerHTML = votes[voteFix];
+                            oldTargetCounter.style.display = "none";
+
+                            setTimeout(function(){
+                                oldTarget.style.width = "96%";
+                                setTimeout(function(){
+                                    oldTargetCounter.style.display = "inline-block"
+                                }, 450);
+                            }, 500);
+
+                        }
+
+                        selectedOptionHistory.unshift(`rushmore-option-${optionNumber}-container`);
+                        selectedOptionCounterHistory.unshift(`rushmore-option-${optionNumber}-counter-container`);
+
+                        target.classList.add("selected-option-container");
+                        target.style.width = "75px";
+
+                        votes[optionNumber]++;
+
+                        targetCounter.innerHTML = votes[optionNumber];
+                        targetCounter.style.display = "none"
+
                         setTimeout(function(){
-                            oldTargetCounter.style.display = "inline-block"
-                        }, 450);
-                    }, 500);
-
+                            target.style.width = "96%";
+                            setTimeout(function(){
+                                targetCounter.style.display = "inline-block"
+                            }, 450);
+                        }, 500);
+                        break;
                 }
-
-                selectedOptionHistory.unshift(`rushmore-option-${optionNumber}-container`);
-                selectedOptionCounterHistory.unshift(`rushmore-option-${optionNumber}-counter-container`);
-
-                target.classList.add("selected-option-container");
-                target.style.width = "75px";
-                
-                votes[optionNumber]++;
-                
-                targetCounter.innerHTML = votes[optionNumber];
-                targetCounter.style.display = "none"
-                
-                setTimeout(function(){
-                    target.style.width = "96%";
-                    setTimeout(function(){
-                        targetCounter.style.display = "inline-block"
-                    }, 450);
-                }, 500);
             }
             else{
                 console.log("already selected this option");
@@ -574,6 +660,21 @@
                 createPoll();
             });
             
+            document.getElementById("search-for-category-container").addEventListener("input", function(){
+                switch(sessionManager.application.page){
+                    case 0: 
+                        console.log("ohh yea");
+                        break;
+                    case 1:
+                        console.log("yoooo")
+                        document.getElementById("title-container").innerHTML = document.getElementById("search-for-category-container").value;
+                        sessionManager.application.checks[0] = true;
+                        checkSMChecks();
+                        break;
+                    default: 
+                        break;
+                }
+            })
             document.getElementById("category-option-button-container").addEventListener("click", function(){
                 openCategories();
             });
@@ -587,6 +688,7 @@
             }
             else{
                 console.log("create a new poll");
+                sessionManager.application.page = 1;
                 sharePollWithAudience();
             }
         }
@@ -675,6 +777,7 @@
         }
         
         function discardPoll(){
+            sessionManager.application.page = 0;
             // tell the session manager to disregard the poll draft
             creatingAPoll = false;
         }
@@ -711,33 +814,25 @@
                     Topic/Subject to be Ranked
                 </div>
                 <div id="rushmore-option-0-container" class="rushmore-option-container">
-                    <div id="rushmore-option-0-title-container" class="rushmore-title-container">
-                        Option 0
-                    </div>
+                    <input id="rushmore-option-0-title-container" class="rushmore-title-container" placeholder="Option 0"/>
                     <div id="rushmore-option-0-counter-container" class="rushmore-counter-container">
                         0
                     </div>
                 </div>
                 <div id="rushmore-option-1-container" class="rushmore-option-container">
-                    <div id="rushmore-option-1-title-container" class="rushmore-title-container">
-                        Option 1
-                    </div>
+                    <input id="rushmore-option-1-title-container" class="rushmore-title-container" placeholder="Option 1"/>
                     <div id="rushmore-option-1-counter-container" class="rushmore-counter-container">
                         0
                     </div>
                 </div>
                 <div id="rushmore-option-2-container" class="rushmore-option-container">
-                    <div id="rushmore-option-2-title-container" class="rushmore-title-container">
-                        Option 2
-                    </div>
+                    <input id="rushmore-option-2-title-container" class="rushmore-title-container" placeholder="Option 2">
                     <div id="rushmore-option-2-counter-container" class="rushmore-counter-container">
                         0
                     </div>
                 </div>
-                <div id="rushmore-option-3-container" class="rushmore-option-container">
-                    <div id="rushmore-option-3-title-container" class="rushmore-title-container">
-                        Option 3
-                    </div>
+                 <div id="rushmore-option-3-container" class="rushmore-option-container">
+                    <input id="rushmore-option-3-title-container" class="rushmore-title-container" placeholder="Option 3">
                     <div id="rushmore-option-3-counter-container" class="rushmore-counter-container">
                         0
                     </div>
