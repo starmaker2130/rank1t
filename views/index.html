@@ -170,6 +170,7 @@
             height: 5%;
             position: absolute;
             bottom: 0;
+            opacity: 1.0;
             transition: bottom 0.5s;
         }
         
@@ -255,13 +256,14 @@
             margin-left: 50%;
         }
         
-        #selected-application-widget-container{
+        .selected-application-widget-container{
             height: 0;
             display: none;
             position: absolute;
             bottom: 0;
             width: 100%;
-            transition: height 0.5s;
+            opacity: 0;
+            transition: height 0.5s, opacity 0.5s;
         }
         
         .option-button-container{
@@ -314,6 +316,8 @@
         var selectedOptionCounterHistory = [];
         var votes = [0, 0, 0, 0];
         var AWBInView = true; //AWB = Application Widget Banner
+        var RushmoreAppIsVisible = true;
+        var RushmoreAppWidgetIsVisible = false;
         
         function selectOption(optionNumber){
             let target = document.getElementById(`rushmore-option-${optionNumber}-container`);
@@ -398,8 +402,67 @@
                 }, 50);
             }
         }
+         
+        function hideRushmoreAppWidgetContainer(){
+            let rushmoreAppWidget = document.getElementById("rushmore-application-widget-container");
+            rushmoreAppWidget.style.height = 0;
+            rushmoreAppWidget.style.opacity = 0;
+
+            document.getElementById("messages-input-container").style.bottom = "3%";
+            
+            document.getElementById("application-icons-banner-container").style.bottom = 0;
+            
+            setTimeout(function(){
+                rushmoreAppWidget.style.display = "none";
+                RushmoreAppWidgetIsVisible = false;
+            }, 550);
+        }
         
-        var RushmoreAppIsVisible = true;
+        function showRushmoreAppWidgetContainer(){
+            document.getElementById("rushmore-application-widget-container").style.display = "block";
+                
+            setTimeout(function(){
+                document.getElementById("rushmore-application-widget-container").style.height = "30%";
+                document.getElementById("rushmore-application-widget-container").style.opacity = 1.0;
+                document.getElementById("messages-input-container").style.bottom = "33%";
+                document.getElementById("application-icons-banner-container").style.bottom = "30%";
+            }, 50);
+            RushmoreAppWidgetIsVisible = true;
+            /*
+            let rushmoreAppWidget = document.getElementById("rushmore-application-widget-container");
+            rushmoreApp.style.display = "block";
+
+            setTimeout(function(){
+                rushmoreAppWidget.style.height = 1.0;
+                rushmoreAppWidget.style.opacity = 1.0;
+                RushmoreAppWidgetIsVisible = true;
+            }, 50);*/
+        }
+        
+        function toggleRushmoreAppWidgetVisibility(value){
+            console.log(value);
+            if(value==null||value==undefined){
+                
+                console.log(value!==undefined);
+                console.log(RushmoreAppWidgetIsVisible);
+                if(RushmoreAppWidgetIsVisible){
+                    hideRushmoreAppWidgetContainer();
+                }
+                else{
+                    console.log("show the widget 0");
+                    showRushmoreAppWidgetContainer();
+                }
+            } else{
+                if(value===0){
+                    hideRushmoreAppWidgetContainer();
+                }
+                else if(value===1){
+                    console.log("show the widget 1");
+                    showRushmoreAppWidgetContainer();
+                }
+            }
+            console.log("ok");
+        }
         
         function hideRushmoreAppContainer(){
             let rushmoreApp = document.getElementById("rushmore-app-container");
@@ -468,16 +531,54 @@
             });
             
             document.getElementById("rushmore-app-widget-button-container").addEventListener("click", function(){
-                document.getElementById("selected-application-widget-container").style.display = "block";
+                console.log("clicked on widget toggler");
+                toggleRushmoreAppWidgetVisibility();
+                /*document.getElementById("rushmore-application-widget-container").style.display = "block";
                 
                 setTimeout(function(){
-                    document.getElementById("selected-application-widget-container").style.height = "30%";
+                    document.getElementById("rushmore-application-widget-container").style.height = "30%";
                     document.getElementById("messages-input-container").style.bottom = "33%";
                     document.getElementById("application-icons-banner-container").style.bottom = "30%";
                 }, 50);
+                */
+            });
+            
+            document.getElementById("create-option-button-container").addEventListener("click", function(){
+                
+            });
+            
+            document.getElementById("category-option-button-container").addEventListener("click", function(){
                 
             });
         });
+        
+        function createPoll(){
+            
+        }
+        
+        function sharePollWithAudience(){
+            
+        }
+        
+        function aattachPollEvemtListeners(){
+            
+        }
+        
+        function discardPoll(){
+            
+        }
+        
+        function registerPollWithMain(){
+            
+        }
+        
+        function savePollAsDraftByHost(){
+            
+        }
+        
+        function openCategories(){
+            
+        }
     </script>
 </head>
 <body>
@@ -553,7 +654,7 @@
                 <div class="app-widget-button-container"></div>
             </div>
         </div>
-        <div id="selected-application-widget-container">
+        <div id="rushmore-application-widget-container" class="selected-application-widget-container">
             <input id="search-for-category-container" type="text" placeholder="Search Rushmore Rankings..."/>
             <div id="main-rushmore-options-container">
                 <div id="create-option-button-container" class="option-button-container">create</div>
