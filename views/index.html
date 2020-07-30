@@ -160,7 +160,7 @@
             bottom: 3%;
             font-family: "Helvetica Neue", sans-serif;
             overflow-x: scroll;
-            transition: bottom 0.5s;
+            transition: bottom 0.5s, opacity 0.5s;
         }
         
         #application-icons-banner-container{
@@ -171,7 +171,7 @@
             position: absolute;
             bottom: 0;
             opacity: 1.0;
-            transition: bottom 0.5s;
+            transition: bottom 0.5s, opacity 0.5s;
         }
         
         #application-widgets-banner-container{
@@ -241,8 +241,21 @@
             transition: background-color 1s, width 0.5s;
         }
         
-        .selected-option-container{
+        .selected-option-container-0{
             background-color: #67E1DC;
+        }
+
+	.selected-option-container-1{
+            background-color: blue;
+	    color: white;
+        }
+
+	.selected-option-container-2{
+            background-color: yellow;
+        }
+
+	.selected-option-container-3{
+            background-color: red;
         }
         
         .rushmore-title-container:focus{
@@ -345,6 +358,7 @@
             outline: none;
             text-align: center;
             font-size: 18px;
+	    cursor: pointer;
         }
         
         .white-category-colors, .white-category-colors::placeholder{
@@ -367,10 +381,10 @@
             application: {
                 page: 0, /* 0 = lobby/main menu
                 *   1 = create menu
-                *     at this stage the topic/subject to be   *     Ranked" atomaticlly updates as the user *     types it into the title field below and
+                *     at this stage the topic/subject to be   *     Ranked" automaticlly updates as the user *     types it into the title field below and
                 *     tapping on options allows the user to 
                 *     modify their names; voting is disabled 
-                *
+                *   2 = voting in session page; rank1ng sent to audience and a timer block is set on the app menu; once this expires the user is sent back to the main menu (create or category)
                 *
                 */
                 checks: [
@@ -396,8 +410,12 @@
             let targetCounter = document.getElementById(`rushmore-option-${optionNum}-counter-container`);
             
             sessionManager.application.checks[optionNum+1] = true;
+	    console.log("------------------------\n              checks array\n------------------------");
+	    console.log(sessionManager.application.checks[optionNum+1]);
             checkSMChecks();
         }
+
+	var waitingInterval;
         
         function checkSMChecks(){
             console.log("checking checks!!");
@@ -413,13 +431,64 @@
             if(checkCounter===5){
                 document.getElementById("search-for-category-container").classList.remove("white-category-colors");
                 document.getElementById("search-for-category-container").classList.add("submit-poll-category-colors");
-            }
+                sessionManager.application.page = 2;
+		tapToSubmitPollBlocker = true;
+
+		waitingInterval = setInterval(function(){
+
+		    if(waitingForOthersTimer<20){
+			if(waitingForOthersTimer==20)document.getElementById("search-for-category-container").value = "Waiting for others...";
+			let finalWaitingString;
+			if(waitingForOthersTimer>=10&&waitingForOthersTimer<16)finalWaitingString=waitingForOthersTimer;
+			if(waitingForOthersTimer<10)finalWaitingString="0"+waitingForOthersTimer;
+	 	        
+			document.getElementById("search-for-category-container").value = "00:"+finalWaitingString;
+		    }
+		
+  		    if(waitingForOthersTimer<0){
+			clearInterval(waitingInterval);
+			showFinalRankings();
+		    }
+		
+  		    waitingForOthersTimer--;
+		    
+		}, 1000);
+		
+	    }
             else{
                 document.getElementById("search-for-category-container").classList.add("white-category-colors");
             }
             console.log(checkCounter);
         }
-        
+
+	function showFinalRankings(){
+	    sessionManager.application.page = 3;
+	    console.log("show the final option rankings in the correct order and color array");
+	    console.log("green is the best, blue is second best, yellow is third, and red is last");
+	    document.getElementById("search-for-category-container").value = "RANK1NG COMPLETE!";
+	    setTimeout(function(){
+	        document.getElementById("search-for-category-container").value = "TAP TO SEE TOTALS";
+	        document.getElementById("search-for-category-container").style.backgroundColor = "red";
+	        document.getElementById("search-for-category-container").classList.remove("submit-poll-category-colors");
+	        document.getElementById("search-for-category-container").classList.add("white-category-colors");
+	    }, 3000);
+	}
+
+	function loadTotalRankings(){
+	    let totalRankingsTally = [
+		{item: 2, name: "", tally:4, weight: 16},
+		{item: 3, name: "", tally:2, weight: 8},
+		{item: 1, name: "", tally:1, weight: 4},
+		{item: 0, name: "", tally:0, weight: 2}
+	    ];
+	    console.log(totalRankingsTally);
+	
+	}
+
+        var optionContainerCounter = 0;
+	var tapToSubmitPollBlocker = false;
+	var waitingForOthersTimer = 30;
+
         function selectOption(optionNumber){
             let target = document.getElementById(`rushmore-option-${optionNumber}-container`);
             let targetCounter = document.getElementById(`rushmore-option-${optionNumber}-counter-container`);
@@ -444,7 +513,7 @@
                             let oldTarget = document.getElementById(selectedOptionHistory[0]);
                             let oldTargetCounter = document.getElementById(selectedOptionCounterHistory[0]);
 
-                            oldTarget.classList.remove("selected-option-container");
+                            //oldTarget.classList.remove("selected-option-container");
                             oldTarget.style.width = "75px";
 
 
@@ -458,7 +527,7 @@
                             setTimeout(function(){
                                 oldTarget.style.width = "96%";
                                 setTimeout(function(){
-                                    oldTargetCounter.style.display = "inline-block"
+                                    //oldTargetCounter.style.display = "inline-block"
                                 }, 450);
                             }, 500);
 
@@ -467,10 +536,11 @@
                         selectedOptionHistory.unshift(`rushmore-option-${optionNumber}-container`);
                         selectedOptionCounterHistory.unshift(`rushmore-option-${optionNumber}-counter-container`);
 
-                        target.classList.add("selected-option-container");
+                        target.classList.add(`selected-option-container-${optionContainerCounter}`);
                         target.style.width = "75px";
 
                         votes[optionNumber]++;
+			optionContainerCounter++;
 
                         targetCounter.innerHTML = votes[optionNumber];
                         targetCounter.style.display = "none"
@@ -478,7 +548,7 @@
                         setTimeout(function(){
                             target.style.width = "96%";
                             setTimeout(function(){
-                                targetCounter.style.display = "inline-block"
+                                //targetCounter.style.display = "inline-block"
                             }, 450);
                         }, 500);
                         break;
@@ -661,21 +731,41 @@
             });
             
             document.getElementById("search-for-category-container").addEventListener("input", function(){
-                switch(sessionManager.application.page){
-                    case 0: 
-                        console.log("ohh yea");
-                        break;
-                    case 1:
-                        console.log("yoooo")
-                        document.getElementById("title-container").innerHTML = document.getElementById("search-for-category-container").value;
-                        sessionManager.application.checks[0] = true;
-                        checkSMChecks();
-                        break;
-                    default: 
-                        break;
-                }
-            })
-            document.getElementById("category-option-button-container").addEventListener("click", function(){
+		if(!tapToSubmitPollBlocker){                
+     		    switch(sessionManager.application.page){
+		        case 0: 
+		            console.log("ohh yea");
+		            break;
+		        case 1:
+		            console.log("yoooo")
+		            document.getElementById("title-container").innerHTML = document.getElementById("search-for-category-container").value;
+		            sessionManager.application.checks[0] = true;
+		            checkSMChecks();
+		            break;
+		        default: 
+		            break;
+		    }
+		}
+		else{
+		    console.log("regular submission not active! \n waiting on rank counter to stop...");
+		}
+            });
+
+	    document.getElementById("search-for-category-container").addEventListener("click", function(){
+		switch(sessionManager.application.page){
+	  	    case 2:
+			console.log("send rank1ng to audience");
+			break;
+		    case 3:
+			console.log("loading total rank1ng");
+			loadTotalRankings();
+		    default:
+			console.log("entering input; not ready to send ranking to audience");
+			break;
+		}
+	    });
+
+	    document.getElementById("category-option-button-container").addEventListener("click", function(){
                 openCategories();
             });
         });
@@ -792,6 +882,17 @@
         
         function openCategories(){
             console.log("open poll categories");
+	    document.getElementById("create-option-button-container").style.opacity = 0;
+	    document.getElementById("category-option-button-container").style.opacity = 0;
+	    document.getElementById("messages-input-container").style.opacity = 0;
+ 	    document.getElementById("application-icons-banner-container").style.opacity = 0;
+	    setTimeout(function(){
+		document.getElementById("create-option-button-container").style.display = "none";
+		document.getElementById("category-option-button-container").style.display = "none";
+	    	document.getElementById("messages-input-container").style.display = "none";
+		document.getElementById("application-icons-banner-container").style.display = "none";	
+	    }, 550);
+
         }
     </script>
 </head>
